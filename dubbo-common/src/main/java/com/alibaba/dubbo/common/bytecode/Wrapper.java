@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
  * Wrapper.
  */
 public abstract class Wrapper {
+    //会将生成的wrapper保存起来
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String[] OBJECT_METHODS = new String[]{"getClass", "hashCode", "toString", "equals"};
@@ -110,6 +111,9 @@ public abstract class Wrapper {
         return ret;
     }
 
+    /**
+     * 使用javassist 为类生成一个代理类
+     * */
     private static Wrapper makeWrapper(Class<?> c) {
         if (c.isPrimitive())
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);

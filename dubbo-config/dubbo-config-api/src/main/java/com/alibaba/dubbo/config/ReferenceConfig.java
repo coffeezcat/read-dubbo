@@ -356,12 +356,14 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
         if (isJvmRefer) {
             URL url = new URL(Constants.LOCAL_PROTOCOL, NetUtils.LOCALHOST, 0, interfaceClass.getName()).addParameters(map);
+            //从本地生成一个可调用对象
             invoker = refprotocol.refer(interfaceClass, url);
             if (logger.isInfoEnabled()) {
                 logger.info("Using injvm service " + interfaceClass.getName());
             }
         } else {
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
+                //是否有多个地址
                 String[] us = Constants.SEMICOLON_SPLIT_PATTERN.split(url);
                 if (us != null && us.length > 0) {
                     for (String u : us) {
@@ -377,6 +379,8 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     }
                 }
             } else { // assemble URL from register center's configuration
+                //根据配置加载注册中心地址:
+                //registry://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?application=dubbo_consumer&client=zkclient&dubbo=2.6.2&pid=6112&registry=zookeeper&timestamp=1559788660483
                 List<URL> us = loadRegistries(false);
                 if (us != null && !us.isEmpty()) {
                     for (URL u : us) {
@@ -392,6 +396,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 }
             }
 
+            //只有一个注册中心
             if (urls.size() == 1) {
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
@@ -406,6 +411,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 if (registryURL != null) { // registry url is available
                     // use AvailableCluster only when register's cluster is available
                     URL u = registryURL.addParameter(Constants.CLUSTER_KEY, AvailableCluster.NAME);
+                    //如果有多个调用者 会返回一个集群invoker ,然后传入代理，真正调用 doInvoke会随机选择一个
                     invoker = cluster.join(new StaticDirectory(u, invokers));
                 } else { // not a registry url
                     invoker = cluster.join(new StaticDirectory(invokers));
@@ -428,7 +434,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         if (logger.isInfoEnabled()) {
             logger.info("Refer dubbo service " + interfaceClass.getName() + " from url " + invoker.getUrl());
         }
-        // create service proxy
+        // 选择一个调用者创建代理
         return (T) proxyFactory.getProxy(invoker);
     }
 

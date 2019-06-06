@@ -307,8 +307,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 throw new IllegalStateException("The stub implementation class " + stubClass.getName() + " not implement interface " + interfaceName);
             }
         }
+        //检查应用
         checkApplication();
+        //检查注册中心
         checkRegistry();
+
         checkProtocol();
         appendProperties(this);
         checkStub(interfaceClass);
@@ -355,13 +358,16 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
+        //多个注册中心
         List<URL> registryURLs = loadRegistries(true);
+        //多个注册协议  每个协议都向每个注册中心注册
         for (ProtocolConfig protocolConfig : protocols) {
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }
 
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
+        //默认走dubbo协议
         String name = protocolConfig.getName();
         if (name == null || name.length() == 0) {
             name = "dubbo";

@@ -50,6 +50,7 @@ public interface Protocol {
     <T> Exporter<T> export(Invoker<T> invoker) throws RpcException;
 
     /**
+     *
      * Refer a remote service: <br>
      * 1. When user calls `invoke()` method of `Invoker` object which's returned from `refer()` call, the protocol
      * needs to correspondingly execute `invoke()` method of `Invoker` object <br>

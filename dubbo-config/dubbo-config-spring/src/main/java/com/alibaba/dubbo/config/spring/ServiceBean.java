@@ -107,6 +107,9 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         }
     }
 
+    /**
+     * @return true 无需延迟发布
+     * */
     private boolean isDelay() {
         Integer delay = getDelay();
         ProviderConfig provider = getProvider();
@@ -120,6 +123,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
     @SuppressWarnings({"unchecked", "deprecation"})
     public void afterPropertiesSet() throws Exception {
         if (getProvider() == null) {
+            //提供者配置
             Map<String, ProviderConfig> providerConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ProviderConfig.class, false, false);
             if (providerConfigMap != null && providerConfigMap.size() > 0) {
                 Map<String, ProtocolConfig> protocolConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ProtocolConfig.class, false, false);

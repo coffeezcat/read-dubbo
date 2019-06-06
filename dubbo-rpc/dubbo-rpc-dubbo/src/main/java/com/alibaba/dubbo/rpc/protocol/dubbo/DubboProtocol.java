@@ -338,7 +338,9 @@ public class DubboProtocol extends AbstractProtocol {
         invokers.add(invoker);
         return invoker;
     }
-
+    /**
+     * 组装调用的客户端
+     * */
     private ExchangeClient[] getClients(URL url) {
         // whether to share connection
         boolean service_share_connect = false;
